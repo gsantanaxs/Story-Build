@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Story Builder ✨ - SESISP</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple: #7c5cff;
+            --purple-dark: #5b3fd1;
+            --pink: #ff70a6;
+            --yellow: #ffd95a;
+            --blue: #58c7ff;
+            --green: #6edb8b;
+            --orange: #ff9d5c;
+            --ink: #30294a;
+            --soft: #f8f6ff;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: "Nunito", sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(255, 217, 90, .32) 0 60px, transparent 61px),
+                radial-gradient(circle at 90% 15%, rgba(88, 199, 255, .25) 0 80px, transparent 81px),
+                radial-gradient(circle at 85% 85%, rgba(255, 112, 166, .18) 0 100px, transparent 101px),
+                #f7f5ff;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, button {
+            font-family: "Baloo 2", cursive;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .app {
+            max-width: 1700px;
+            margin: auto;
+            padding: 24px;
+        }
+
+        /* HEADER */
+
+        .topbar {
+            background: rgba(255,255,255,.94);
+            border: 3px solid #eeeaff;
+            border-radius: 30px;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 12px 35px rgba(70,55,130,.09);
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #8065ff, #a88cff);
+            display: grid;
+            place-items: center;
+            font-size: 35px;
+            box-shadow: 0 7px 0 #5d48c6;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 34px;
+            line-height: .9;
+            color: #5d48c6;
+        }
+
+        .brand p {
+            margin: 5px 0 0;
+            font-size: 15px;
+            font-weight: 800;
+            color: #817b9b;
+        }
+
+        .story-status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 17px;
+            background: #f0ffef;
+            border: 2px solid #bdeabd;
+            border-radius: 999px;
+            font-weight: 900;
+            color: #39944f;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #58c96e;
+        }
+
+        /* MAIN GRID */
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 410px minmax(0, 1fr);
+            gap: 22px;
+        }
+
+        /* LIBRARY */
+
+        .library {
+            background: white;
+            border: 3px solid #eeeaff;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 12px 35px rgba(70,55,130,.08);
+            height: calc(100vh - 140px);
+            min-height: 700px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .library-header h2 {
+            font-size: 29px;
+            margin: 0;
+            color: #4c3ba9;
+        }
+
+        .library-header p {
+            font-size: 14px;
+            margin: 2px 0 15px;
+            color: #817b9b;
+            font-weight: 700;
+        }
+
+        .search {
+            border: 3px solid #eeeaff;
+            background: #faf9ff;
+            border-radius: 17px;
+            padding: 13px 16px;
+            width: 100%;
+            font-size: 15px;
+            font-weight: 700;
+            outline: none;
+            transition: .2s;
+            margin-bottom: 14px;
+        }
+
+        .search:focus {
+            border-color: #9d8cff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(124,92,255,.1);
+        }
+
+        .categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+
+        .category-btn {
+            flex: 0 0 auto;
+            border: 0;
+            background: #f3f0ff;
+            color: #695db0;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 900;
+            transition: .2s;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active {
+            color: white;
+            background: linear-gradient(135deg, #7c5cff, #a184ff);
+            box-shadow: 0 5px 0 #5b45c5;
+        }
+
+        .library-list {
+            overflow-y: auto;
+            padding: 7px 5px 20px 2px;
+            flex: 1;
+        }
+
+        .library-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .library-list::-webkit-scrollbar-thumb {
+            background: #d9d3f4;
+            border-radius: 20px;
+        }
+
+        .library-card {
+            position: relative;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            width: 100%;
+            padding: 12px;
+            border: 3px solid #f0edff;
+            background: #fff;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            transition: .2s;
+            cursor: grab;
+        }
+
+        .library-card:hover {
+            transform: translateY(-3px) rotate(-.3deg);
+            border-color: #b8aaff;
+            box-shadow: 0 8px 20px rgba(92,67,190,.12);
+        }
+
+        .library-card:active {
+            cursor: grabbing;
+            transform: scale(.97);
+        }
+
+        .library-card .emoji {
+            min-width: 57px;
+            height: 57px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            font-size: 31px;
+            background: #f7f4ff;
+        }
+
+        .library-card strong {
+            display: block;
+            font-size: 17px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .library-card small {
+            color: #8b86a2;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .drag-hint {
+            margin-left: auto;
+            color: #bbb5d0;
+            font-size: 19px;
+        }
+
+        /* EDIT CHARACTER BUTTON */
+
+        .edit-library-btn {
+            position: absolute;
+            right: 9px;
+            bottom: 8px;
+            border: 0;
+            background: #eeeaff;
+            color: #6553b7;
+            width: 29px;
+            height: 29px;
+            border-radius: 9px;
+            font-size: 14px;
+            display: none;
+            z-index: 2;
+        }
+
+        .library-card:hover .edit-library-btn {
+            display: block;
+        }
+
+        /* RIGHT */
+
+        .right {
+            min-width: 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #7b5cf4, #9a7fff);
+            color: white;
+            border-radius: 32px;
+            padding: 26px 30px;
+            min-height: 165px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 0 #6049cb, 0 20px 40px rgba(91,63,209,.18);
+        }
+
+        .hero:before,
+        .hero:after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,.12);
+        }
+
+        .hero:before {
+            width: 230px;
+            height: 230px;
+            right: -70px;
+            top: -100px;
+        }
+
+        .hero:after {
+            width: 150px;
+            height: 150px;
+            right: 150px;
+            bottom: -110px;
+        }
+
+        .hero h2 {
+            margin: 0;
+            font-size: 38px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            margin: 3px 0 0;
+            font-size: 16px;
+            font-weight: 700;
+            opacity: .93;
+            max-width: 650px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-stars {
+            position: absolute;
+            right: 30px;
+            bottom: 17px;
+            font-size: 40px;
+            letter-spacing: 7px;
+            transform: rotate(-8deg);
+        }
+
+        /* STORY BOARD */
+
+        .board {
+            margin-top: 22px;
+            background: white;
+            border: 3px solid #eeeaff;
+            border-radius: 30px;
+            padding: 22px;
+            box-shadow: 0 12px 35px rgba(70,55,130,.08);
+        }
+
+        .board-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 14px;
+        }
+
+        .board-title h2 {
+            margin: 0;
+            font-size: 27px;
+            color: #4d3ba5;
+        }
+
+        .counter {
+            background: #fff8d8;
+            border: 2px solid #f7df83;
+            color: #9b7710;
+            padding: 8px 13px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .drop-zone {
+            min-height: 235px;
+            border: 3px dashed #c7bef0;
+            background:
+                linear-gradient(135deg, rgba(124,92,255,.03), rgba(255,112,166,.035));
+            border-radius: 24px;
+            padding: 17px;
+            display: flex;
+            gap: 13px;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            transition: .2s;
+        }
+
+        .drop-zone.drag-over {
+            background: #f0edff;
+            border-color: #7c5cff;
+            transform: scale(1.01);
+        }
+
+        .empty-board {
+            width: 100%;
+            min-height: 195px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            color: #aaa4bf;
+        }
+
+        .empty-board .big {
+            font-size: 65px;
+            display: block;
+        }
+
+        .empty-board h3 {
+            margin: 0;
+            font-size: 23px;
+            color: #827a9f;
+        }
+
+        .empty-board p {
+            margin: 3px 0 0;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .story-item {
+            position: relative;
+            width: 150px;
+            min-height: 142px;
+            border: 3px solid #eeeaff;
+            border-radius: 21px;
+            background: white;
+            padding: 12px;
+            cursor: grab;
+            transition: .2s;
+            box-shadow: 0 5px 0 #eeeaff;
+        }
+
+        .story-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .story-item.selected {
+            border-color: #7c5cff;
+            box-shadow: 0 6px 0 #624bd1, 0 0 0 4px rgba(124,92,255,.1);
+        }
+
+        .story-item .item-emoji {
+            font-size: 37px;
+            margin-bottom: 4px;
+        }
+
+        .story-item strong {
+            display: block;
+            font-size: 16px;
+            line-height: 1.05;
+        }
+
+        .story-item small {
+            color: #8b86a2;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .story-item .remove {
+            position: absolute;
+            right: 7px;
+            top: 7px;
+            width: 27px;
+            height: 27px;
+            border: 0;
+            border-radius: 9px;
+            background: #fff0f3;
+            color: #e75e79;
+            font-weight: 900;
+        }
+
+        .story-item .edit {
+            position: absolute;
+            right: 39px;
+            top: 7px;
+            width: 27px;
+            height: 27px;
+            border: 0;
+            border-radius: 9px;
+            background: #eeeaff;
+            color: #6654b6;
+            font-weight: 900;
+        }
+
+        /* CONTROLS */
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 17px;
+        }
+
+        .main-btn {
+            border: 0;
+            border-radius: 17px;
+            padding: 13px 18px;
+            font-size: 16px;
+            font-weight: 900;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .main-btn.primary {
+            background: #7c5cff;
+            color: white;
+            box-shadow: 0 5px 0 #5c45c5;
+        }
+
+        .main-btn.yellow {
+            background: #ffd95a;
+            color: #725400;
+            box-shadow: 0 5px 0 #d9b438;
+        }
+
+        .main-btn.light {
+            background: #f0edff;
+            color: #6352ae;
+        }
+
+        /* NARRATIVE */
+
+        .narrative {
+            margin-top: 22px;
+            background: #fffdf3;
+            border: 3px solid #f4e8ad;
+            border-radius: 30px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .narrative-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .narrative h2 {
+            margin: 0;
+            font-size: 29px;
+            color: #795d13;
+        }
+
+        .book-icon {
+            font-size: 42px;
+        }
+
+        #storyText {
+            margin-top: 18px;
+            color: #4b4430;
+            font-size: 17px;
+            line-height: 1.85;
+            font-weight: 600;
+        }
+
+        #storyText .story-title {
+            color: #6349c5;
+            font-family: "Baloo 2", cursive;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        #storyText p {
+            margin: 0 0 14px;
+        }
+
+        .story-highlight {
+            display: inline-block;
+            background: #fff0a9;
+            border-radius: 8px;
+            padding: 0 5px;
+        }
+
+        .placeholder-story {
+            text-align: center;
+            color: #a39770;
+            padding: 25px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        /* MODAL */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(42,35,73,.55);
+            backdrop-filter: blur(7px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            width: min(580px, 100%);
+            background: white;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 30px 80px rgba(35,25,70,.3);
+            animation: pop .22s ease;
+        }
+
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .modal-avatar {
+            width: 67px;
+            height: 67px;
+            border-radius: 20px;
+            background: #f0edff;
+            display: grid;
+            place-items: center;
+            font-size: 38px;
+        }
+
+        .modal h2 {
+            margin: 0;
+            color: #5541aa;
+            font-size: 27px;
+        }
+
+        .modal p {
+            margin: 0;
+            color: #8a849f;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 900;
+            color: #5a5275;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            border: 3px solid #ece9f8;
+            border-radius: 16px;
+            padding: 13px 15px;
+            outline: none;
+            font-family: "Nunito", sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            resize: vertical;
+            background: #fbfaff;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: #8c77ed;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(124,92,255,.08);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* TOAST */
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translate(-50%, 100px);
+            background: #30294a;
+            color: white;
+            border-radius: 17px;
+            padding: 13px 19px;
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 12px 30px rgba(30,20,60,.2);
+            transition: .3s;
+            z-index: 200;
+            opacity: 0;
+        }
+
+        .toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1050px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .library {
+                height: auto;
+                min-height: 500px;
+            }
+
+            .library-list {
+                max-height: 500px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .app {
+                padding: 12px;
+            }
+
+            .topbar {
+                border-radius: 22px;
+                padding: 13px;
+            }
+
+            .brand-icon {
+                width: 53px;
+                height: 53px;
+                font-size: 29px;
+            }
+
+            .brand h1 {
+                font-size: 27px;
+            }
+
+            .story-status {
+                display: none;
+            }
+
+            .hero {
+                border-radius: 24px;
+                padding: 22px;
+            }
+
+            .hero h2 {
+                font-size: 31px;
+            }
+
+            .hero-stars {
+                font-size: 25px;
+                right: 15px;
+            }
+
+            .board,
+            .library,
+            .narrative {
+                border-radius: 23px;
+            }
+
+            .story-item {
+                width: calc(50% - 7px);
+            }
+
+            .controls .main-btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">📖</div>
+
+            <div>
+                <h1>Story Builder - SESISP</h1>
+                <p>Crie histórias incríveis brincando! ✨</p>
+            </div>
+        </div>
+
+        <div class="story-status">
+            <span class="status-dot"></span>
+            Oficina de histórias
+        </div>
+    </header>
+
+
+    <main class="workspace">
+
+        <!-- BIBLIOTECA -->
+        <aside class="library">
+
+            <div class="library-header">
+                <h2>🧸 Biblioteca Criativa</h2>
+                <p>Arraste qualquer coisa para sua história!</p>
+            </div>
+
+            <input
+                id="search"
+                class="search"
+                type="text"
+                placeholder="🔎 Procurar personagem, lugar..."
+            >
+
+            <div class="categories">
+
+                <button class="category-btn active" data-category="personagens">
+                    🧑 Personagens
+                </button>
+
+                <button class="category-btn" data-category="viloes">
+                    🦹 Vilões
+                </button>
+
+                <button class="category-btn" data-category="cenarios">
+                    🌎 Cenários
+                </button>
+
+                <button class="category-btn" data-category="acontecimentos">
+                    ⚡ Acontecimentos
+                </button>
+
+                <button class="category-btn" data-category="objetos">
+                    🎒 Objetos
+                </button>
+
+                <button class="category-btn" data-category="criaturas">
+                    🐉 Criaturas
+                </button>
+
+                <button class="category-btn" data-category="emocoes">
+                    💭 Emoções
+                </button>
+
+            </div>
+
+            <div id="libraryList" class="library-list"></div>
+
+        </aside>
+
+
+        <!-- DIREITA -->
+        <section class="right">
+
+            <div class="hero">
+
+                <h2>Era uma vez... 🪄</h2>
+
+                <p>
+                    Escolha seus personagens, lugares e acontecimentos.
+                    Depois organize tudo no seu roteiro!
+                </p>
+
+                <div class="hero-stars">
+                    ✨ ⭐ 🌈
+                </div>
+
+            </div>
+
+
+            <!-- ROTEIRO -->
+            <section class="board">
+
+                <div class="board-title">
+                    <h2>🧩 Meu roteiro</h2>
+
+                    <div class="counter">
+                        <span id="itemCount">0</span> elementos
+                    </div>
+                </div>
+
+                <div
+                    id="dropZone"
+                    class="drop-zone"
+                >
+
+                    <div class="empty-board" id="emptyBoard">
+
+                        <div>
+                            <span class="big">🪄</span>
+
+                            <h3>Solte suas ideias aqui!</h3>
+
+                            <p>
+                                Arraste os elementos da biblioteca
+                                para começar sua aventura.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="controls">
+
+                    <button
+                        class="main-btn primary"
+                        id="generateBtn"
+                    >
+                        ✨ Criar minha narrativa
+                    </button>
+
+                    <button
+                        class="main-btn yellow"
+                        id="randomBtn"
+                    >
+                        🎲 Ideia surpresa
+                    </button>
+
+                    <button
+                        class="main-btn light"
+                        id="clearBtn"
+                    >
+                        🧹 Limpar roteiro
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- NARRATIVA -->
+            <section class="narrative">
+
+                <div class="narrative-head">
+
+                    <div>
+                        <h2>📚 Sua história</h2>
+                    </div>
+
+                    <div class="book-icon">📖</div>
+
+                </div>
+
+                <div id="storyText">
+
+                    <div class="placeholder-story">
+                        🌟 Sua história aparecerá aqui!<br>
+                        Monte seu roteiro e clique em
+                        <b>“Criar minha narrativa”</b>.
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- MODAL DE EDIÇÃO -->
+
+<div
+    id="modalBackdrop"
+    class="modal-backdrop"
+>
+
+    <div class="modal">
+
+        <div class="modal-top">
+
+            <div
+                id="modalAvatar"
+                class="modal-avatar"
+            >
+                🧑
+            </div>
+
+            <div>
+                <h2>Editar personagem ✏️</h2>
+                <p>Deixe esse personagem com a sua cara!</p>
+            </div>
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="characterName">
+                Nome do personagem
+            </label>
+
+            <input
+                id="characterName"
+                type="text"
+                maxlength="45"
+                placeholder="Ex.: Léo, o explorador"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="characterDescription">
+                Descrição
+            </label>
+
+            <textarea
+                id="characterDescription"
+                rows="4"
+                maxlength="220"
+                placeholder="Conte um pouco sobre esse personagem..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelModal"
+                class="main-btn light"
+            >
+                Cancelar
+            </button>
+
+            <button
+                id="saveCharacter"
+                class="main-btn primary"
+            >
+                💾 Salvar personagem
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+const library = {
+
+    personagens: [
+
+        ["🧒", "Léo", "Um garoto curioso que adora descobrir coisas."],
+        ["👧", "Luna", "Uma menina criativa que acredita em magia."],
+        ["🧑‍🚀", "Nina Astronauta", "Uma exploradora que viaja pelo espaço."],
+        ["🧙", "Milo Mago", "Um pequeno mago que ainda está aprendendo."],
+        ["👸", "Princesa Amora", "Uma princesa corajosa que gosta de aventuras."],
+        ["🤴", "Príncipe Theo", "Um príncipe gentil que prefere resolver problemas."],
+        ["🧑‍🔬", "Bia Cientista", "Uma cientista mirim cheia de invenções."],
+        ["🧑‍🎨", "Pipo Pintor", "Um artista que pinta coisas que podem ganhar vida."],
+        ["🧑‍🍳", "Chef Juca", "Um cozinheiro que inventa receitas malucas."],
+        ["🧒", "Téo Inventor", "Um garoto que constrói máquinas incríveis."],
+        ["👧", "Sofia Exploradora", "Uma aventureira que nunca recusa uma missão."],
+        ["🧑‍🚀", "Capitão Nino", "Um jovem capitão que viaja entre planetas."],
+        ["🧝", "Eli Elfo", "Um elfo que conhece todos os segredos da floresta."],
+        ["🧚", "Fada Lili", "Uma fada pequena com uma magia enorme."],
+        ["🧑‍🌾", "Joãozinho", "Um menino que vive em uma fazenda cheia de surpresas."],
+        ["🧑‍🏫", "Professora Clara", "Uma professora que transforma aulas em aventuras."],
+        ["👦", "Gui Aventureiro", "Um garoto que ama mapas e tesouros."],
+        ["👧", "Maya Inventora", "Uma inventora que nunca para de criar."],
+        ["🧑‍🚒", "Davi Bombeiro", "Um herói que sempre aparece para ajudar."],
+        ["👩‍⚕️", "Dra. Nina", "Uma médica que cuida de todos com carinho."],
+        ["🧒", "Rafa Detetive", "Um pequeno detetive que percebe detalhes incríveis."],
+        ["👧", "Bela Música", "Uma garota que consegue transformar emoções em melodias."]
+    ],
+
+    viloes: [
+
+        ["🦹", "Senhor Sombrio", "Um vilão que quer apagar todas as cores."],
+        ["👿", "Duende Rabugento", "Ele adora atrapalhar planos perfeitos."],
+        ["🧙‍♀️", "Bruxa Neblina", "Uma bruxa que controla uma neblina misteriosa."],
+        ["🐍", "Serpente Falante", "Uma criatura que guarda um segredo antigo."],
+        ["🤖", "Robô Zero", "Uma máquina que decidiu fazer tudo ao contrário."],
+        ["👹", "Monstro do Eco", "Ele vive repetindo tudo o que escuta."],
+        ["🧛", "Conde Pipoca", "Um vampiro engraçado que morre de medo de pipoca."],
+        ["🧟", "Zumbi Zeca", "Um zumbi que só queria fazer amigos."],
+        ["🦹‍♀️", "Rainha Confusão", "Uma vilã que troca tudo de lugar."],
+        ["👺", "Trombinho", "Um monstrinho que faz barulhos assustadores."],
+        ["🧞", "Gênio Trapaceiro", "Um gênio que sempre tenta interpretar desejos literalmente."],
+        ["🧌", "Gigante Rabugento", "Um gigante que não gosta de visitas."],
+        ["🕷️", "Aranha Rainha", "Uma aranha enorme que protege seu castelo."],
+        ["🐉", "Dragão Cinzento", "Um dragão que perdeu seu tesouro favorito."],
+        ["👽", "Alienígena X", "Um visitante espacial que não entende os costumes da Terra."],
+        ["🤡", "Palhaço Misterioso", "Um personagem imprevisível que aparece do nada."],
+        ["🧛‍♀️", "Vampira Violeta", "Uma vampira que prefere aventuras a assustar pessoas."],
+        ["🦊", "Raposa Trapaceira", "Uma raposa esperta que sempre tem um plano."],
+        ["🐺", "Lobo Lunar", "Um lobo que aparece apenas quando a lua está cheia."],
+        ["🧙", "Mago Desastrado", "Um mago que nunca sabe onde suas magias vão parar."],
+        ["🪄", "Feiticeiro do Tempo", "Um feiticeiro capaz de bagunçar o tempo."],
+        ["👑", "Rei do Labirinto", "Um rei que desafia aventureiros com enigmas."]
+    ],
+
+    cenarios: [
+
+        ["🏰", "Castelo Encantado", "Um castelo onde os quadros conversam."],
+        ["🌳", "Floresta Mágica", "Uma floresta cheia de caminhos secretos."],
+        ["🚀", "Estação Espacial", "Uma estação flutuando no espaço."],
+        ["🏝️", "Ilha Misteriosa", "Uma ilha que não aparece em nenhum mapa."],
+        ["🌋", "Montanha Vulcânica", "Uma montanha onde algo estranho está acordando."],
+        ["🏫", "Escola Maluca", "Uma escola onde as matérias ganham vida."],
+        ["🏙️", "Cidade do Futuro", "Uma cidade cheia de robôs e invenções."],
+        ["🌊", "Cidade Submarina", "Uma cidade escondida no fundo do oceano."],
+        ["🏜️", "Deserto Dourado", "Um deserto que esconde um tesouro."],
+        ["🌌", "Planeta Roxo", "Um planeta onde o céu muda de cor."],
+        ["🧊", "Reino de Gelo", "Um reino congelado com cavernas brilhantes."],
+        ["☁️", "Cidade das Nuvens", "Uma cidade construída acima das nuvens."],
+        ["🎪", "Circo Misterioso", "Um circo que aparece somente à meia-noite."],
+        ["🏕️", "Acampamento", "Um acampamento cercado por uma floresta."],
+        ["🗼", "Torre dos Relógios", "Uma torre onde nenhum relógio marca a mesma hora."],
+        ["📚", "Biblioteca Infinita", "Uma biblioteca com livros que parecem não terminar."],
+        ["🕳️", "Portal Secreto", "Uma passagem para um lugar desconhecido."],
+        ["🏡", "Vila Colorida", "Uma vila onde cada casa tem uma cor diferente."],
+        ["🌙", "Vale da Lua", "Um vale iluminado apenas pela luz lunar."],
+        ["🐚", "Praia dos Mistérios", "Uma praia onde conchas contam histórias."],
+        ["🌲", "Bosque dos Sussurros", "Um bosque onde as árvores parecem conversar."],
+        ["🎠", "Parque Encantado", "Um parque onde os brinquedos se movimentam sozinhos."]
+    ],
+
+    acontecimentos: [
+
+        ["⚡", "Um raio cai", "Um raio misterioso cai perto dos personagens."],
+        ["🗺️", "Mapa aparece", "Um mapa secreto surge do nada."],
+        ["🚪", "Porta misteriosa", "Uma porta aparece em um lugar impossível."],
+        ["🎁", "Presente estranho", "Um presente desconhecido chega sem remetente."],
+        ["🌪️", "Grande tempestade", "Uma tempestade muda completamente os planos."],
+        ["🕰️", "O tempo para", "Todos os relógios param ao mesmo tempo."],
+        ["🐉", "Dragão aparece", "Um dragão surge no céu inesperadamente."],
+        ["🚀", "Nave decola", "Uma nave começa a decolar sem ninguém apertar nenhum botão."],
+        ["🔑", "Chave perdida", "Uma chave misteriosa é encontrada."],
+        ["💫", "Estrela cai", "Uma estrela cai bem perto dos protagonistas."],
+        ["🧩", "Enigma surge", "Um enorme enigma aparece diante do grupo."],
+        ["🌈", "Arco-íris mágico", "Um arco-íris abre um caminho secreto."],
+        ["📣", "Mensagem misteriosa", "Uma mensagem chega de alguém desconhecido."],
+        ["🎭", "Tudo muda", "As pessoas começam a trocar de personalidade."],
+        ["🪄", "Magia dá errado", "Uma magia sai completamente diferente do planejado."],
+        ["🏃", "Grande perseguição", "Os protagonistas precisam correr para escapar."],
+        ["💥", "Explosão colorida", "Uma explosão transforma tudo ao redor."],
+        ["🔮", "Profecia aparece", "Uma antiga profecia revela uma missão."],
+        ["🌱", "Planta gigante", "Uma pequena semente cresce de forma inacreditável."],
+        ["🎶", "Música misteriosa", "Uma música desconhecida começa a tocar."],
+        ["📦", "Caixa encontrada", "Uma caixa antiga é encontrada escondida."],
+        ["🌀", "Portal abre", "Um portal aparece no meio do caminho."]
+    ],
+
+    objetos: [
+
+        ["🗝️", "Chave Dourada", "Uma chave que parece abrir qualquer porta."],
+        ["🧭", "Bússola Mágica", "Uma bússola que aponta para aquilo que você procura."],
+        ["🔮", "Cristal Azul", "Um cristal que brilha quando há perigo."],
+        ["📜", "Mapa Antigo", "Um mapa cheio de símbolos secretos."],
+        ["🎒", "Mochila Infinita", "Uma mochila que parece não ter fundo."],
+        ["🕯️", "Vela Encantada", "Uma vela que ilumina caminhos escondidos."],
+        ["⌛", "Ampulheta", "Uma ampulheta capaz de controlar alguns segundos."],
+        ["🪞", "Espelho Mágico", "Um espelho que mostra lugares distantes."],
+        ["💎", "Diamante Lunar", "Uma pedra que brilha durante a noite."],
+        ["📕", "Livro Vivo", "Um livro que escreve novas páginas sozinho."],
+        ["🎩", "Chapéu Mágico", "Um chapéu que sempre guarda uma surpresa."],
+        ["🧪", "Poção Colorida", "Uma poção com efeitos completamente imprevisíveis."],
+        ["🔔", "Sino Misterioso", "Um sino cujo som pode ser ouvido muito longe."],
+        ["🪄", "Varinha Estelar", "Uma varinha feita com uma estrela."],
+        ["🎸", "Guitarra Mágica", "Uma guitarra que muda o ambiente quando toca."],
+        ["🧸", "Ursinho Falante", "Um ursinho que sabe coisas que ninguém sabe."],
+        ["📷", "Câmera do Futuro", "Uma câmera que fotografa acontecimentos antes deles acontecerem."],
+        ["🛹", "Skate Voador", "Um skate capaz de voar."],
+        ["🤖", "Mini Robô", "Um pequeno robô que gosta de resolver problemas."],
+        ["🧩", "Peça Misteriosa", "Uma peça que parece fazer parte de um enorme quebra-cabeça."],
+        ["🪙", "Moeda Antiga", "Uma moeda que abre uma passagem secreta."],
+        ["🧿", "Amuleto Azul", "Um amuleto que protege quem o carrega."]
+    ],
+
+    criaturas: [
+
+        ["🐉", "Dragãozinho", "Um dragão pequeno que solta fumaça colorida."],
+        ["🦄", "Unicórnio", "Um unicórnio que consegue encontrar coisas perdidas."],
+        ["🦊", "Raposa Mágica", "Uma raposa que entende todos os idiomas."],
+        ["🐲", "Dragão Arco-Íris", "Um dragão que cria arco-íris ao voar."],
+        ["🧚", "Fadinha", "Uma criatura pequena com asas brilhantes."],
+        ["🧜", "Sereia", "Uma sereia que conhece os segredos do oceano."],
+        ["🧜‍♂️", "Tritão", "Um guardião das cidades submarinas."],
+        ["🐺", "Lobo Lunar", "Um lobo que conversa com a lua."],
+        ["🦉", "Coruja Sábia", "Uma coruja que conhece histórias antigas."],
+        ["🐰", "Coelho Saltitante", "Um coelho capaz de pular enormes distâncias."],
+        ["🐢", "Tartaruga Veloz", "Uma tartaruga que fica super-rápida quando está feliz."],
+        ["🐸", "Sapo Rei", "Um sapo que vive em um pequeno castelo."],
+        ["🐝", "Abelhinha Inventora", "Uma abelha que cria invenções minúsculas."],
+        ["🦋", "Borboleta Estelar", "Uma borboleta que deixa pequenas estrelas no caminho."],
+        ["🐙", "Polvo Professor", "Um polvo que ensina coisas incríveis."],
+        ["🦖", "Dinossauro Amigo", "Um dinossauro enorme que tem medo de formigas."],
+        ["🐳", "Baleia Voadora", "Uma baleia que nada entre as nuvens."],
+        ["🐼", "Panda Ninja", "Um panda treinado para missões secretas."],
+        ["🐱", "Gato Astronauta", "Um gato que explora planetas distantes."],
+        ["🐶", "Cachorro Detetive", "Um cachorro que encontra pistas pelo cheiro."],
+        ["🦜", "Papagaio Pirata", "Um papagaio que conhece mapas de tesouros."],
+        ["🦕", "Dinossauro Bebê", "Um filhote curioso que vive se metendo em aventuras."]
+    ],
+
+    emocoes: [
+
+        ["❤️", "Coragem", "A vontade de enfrentar algo difícil."],
+        ["😂", "Alegria", "Uma sensação gostosa de felicidade."],
+        ["😱", "Medo", "A sensação de estar diante de algo assustador."],
+        ["😡", "Raiva", "Uma emoção forte que pode fazer alguém agir."],
+        ["🥹", "Saudade", "Sentir falta de alguém ou algum lugar."],
+        ["🤩", "Empolgação", "Aquela energia quando algo incrível está prestes a acontecer."],
+        ["😢", "Tristeza", "Uma emoção que pode aparecer em momentos difíceis."],
+        ["😎", "Confiança", "A sensação de acreditar que você consegue."],
+        ["🤔", "Curiosidade", "A vontade de descobrir alguma coisa."],
+        ["😳", "Surpresa", "Quando algo acontece de maneira inesperada."],
+        ["🥰", "Carinho", "Um sentimento de afeto por alguém."],
+        ["😤", "Determinação", "A vontade de continuar mesmo quando fica difícil."],
+        ["😴", "Sono", "A vontade irresistível de descansar."],
+        ["😨", "Preocupação", "Quando algo deixa a pessoa insegura."],
+        ["🥳", "Comemoração", "A felicidade de conseguir algo importante."],
+        ["🫣", "Vergonha", "Aquele sentimento quando algo deixa você sem graça."],
+        ["🧐", "Desconfiança", "A sensação de que existe algo escondido."],
+        ["😇", "Esperança", "A vontade de acreditar que tudo pode melhorar."],
+        ["😮", "Admiração", "Quando algo deixa alguém impressionado."],
+        ["🫶", "Amizade", "Um sentimento que aproxima pessoas."]
+    ]
+
+};
+
+
+/* ----------------------------------------
+   ESTADO
+---------------------------------------- */
+
+let currentCategory = "personagens";
+
+let storyItems = [];
+
+let draggedLibraryItem = null;
+let draggedStoryItem = null;
+
+let editingCharacter = null;
+
+
+/* ----------------------------------------
+   ELEMENTOS
+---------------------------------------- */
+
+const libraryList = document.getElementById("libraryList");
+const dropZone = document.getElementById("dropZone");
+const emptyBoard = document.getElementById("emptyBoard");
+const itemCount = document.getElementById("itemCount");
+
+const search = document.getElementById("search");
+
+const modalBackdrop = document.getElementById("modalBackdrop");
+const modalAvatar = document.getElementById("modalAvatar");
+
+const characterName = document.getElementById("characterName");
+const characterDescription = document.getElementById("characterDescription");
+
+const storyText = document.getElementById("storyText");
+const toast = document.getElementById("toast");
+
+
+/* ----------------------------------------
+   BIBLIOTECA
+---------------------------------------- */
+
+function renderLibrary() {
+
+    const term = search.value.toLowerCase().trim();
+
+    libraryList.innerHTML = "";
+
+    const items = library[currentCategory]
+        .filter(item => {
+
+            const text = `${item[1]} ${item[2]}`.toLowerCase();
+
+            return text.includes(term);
+
+        });
+
+
+    items.forEach((item, index) => {
+
+        const card = document.createElement("div");
+
+        card.className = "library-card";
+
+        card.draggable = true;
+
+        card.dataset.category = currentCategory;
+        card.dataset.index = index;
+
+        card.innerHTML = `
+            <div class="emoji">${item[0]}</div>
+
+            <div>
+                <strong>${item[1]}</strong>
+                <small>${item[2]}</small>
+            </div>
+
+            ${
+                currentCategory === "personagens"
+                ? `<button class="edit-library-btn" title="Editar personagem">✏️</button>`
+                : ""
+            }
+
+            <span class="drag-hint">⋮⋮</span>
+        `;
+
+
+        card.addEventListener("dragstart", e => {
+
+            draggedLibraryItem = {
+                category: currentCategory,
+                index: index,
+                item: [...item]
+            };
+
+            e.dataTransfer.effectAllowed = "copy";
+
+            setTimeout(() => {
+                card.style.opacity = ".45";
+            }, 0);
+
+        });
+
+
+        card.addEventListener("dragend", () => {
+
+            card.style.opacity = "1";
+
+            draggedLibraryItem = null;
+
+        });
+
+
+        card.addEventListener("dblclick", () => {
+
+            if (currentCategory === "personagens") {
+
+                openCharacterEditor({
+                    type: "library",
+                    category: currentCategory,
+                    index: index,
+                    item: [...item]
+                });
+
+            }
+
+        });
+
+
+        const editBtn = card.querySelector(".edit-library-btn");
+
+        if (editBtn) {
+
+            editBtn.addEventListener("click", e => {
+
+                e.stopPropagation();
+
+                openCharacterEditor({
+                    type: "library",
+                    category: currentCategory,
+                    index: index,
+                    item: [...item]
+                });
+
+            });
+
+        }
+
+
+        libraryList.appendChild(card);
+
+    });
+
+}
+
+
+/* ----------------------------------------
+   CATEGORIAS
+---------------------------------------- */
+
+document.querySelectorAll(".category-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document.querySelectorAll(".category-btn")
+            .forEach(btn => btn.classList.remove("active"));
+
+        button.classList.add("active");
+
+        currentCategory = button.dataset.category;
+
+        search.value = "";
+
+        renderLibrary();
+
+    });
+
+});
+
+
+search.addEventListener("input", renderLibrary);
+
+
+/* ----------------------------------------
+   DRAG & DROP
+---------------------------------------- */
+
+dropZone.addEventListener("dragover", e => {
+
+    e.preventDefault();
+
+    dropZone.classList.add("drag-over");
+
+});
+
+
+dropZone.addEventListener("dragleave", e => {
+
+    if (!dropZone.contains(e.relatedTarget)) {
+
+        dropZone.classList.remove("drag-over");
+
+    }
+
+});
+
+
+dropZone.addEventListener("drop", e => {
+
+    e.preventDefault();
+
+    dropZone.classList.remove("drag-over");
+
+
+    if (draggedLibraryItem) {
+
+        addStoryItem(
+            draggedLibraryItem.category,
+            draggedLibraryItem.item
+        );
+
+        draggedLibraryItem = null;
+
+    }
+
+});
+
+
+/* ----------------------------------------
+   ADICIONAR ITEM
+---------------------------------------- */
+
+function addStoryItem(category, item) {
+
+    const storyItem = {
+
+        id: Date.now() + Math.random(),
+
+        category,
+
+        emoji: item[0],
+
+        name: item[1],
+
+        description: item[2]
+
+    };
+
+    storyItems.push(storyItem);
+
+    renderStoryBoard();
+
+    showToast(`${item[0]} ${item[1]} entrou na história!`);
+
+}
+
+
+/* ----------------------------------------
+   STORY BOARD
+---------------------------------------- */
+
+function renderStoryBoard() {
+
+    dropZone.innerHTML = "";
+
+    itemCount.textContent = storyItems.length;
+
+
+    if (storyItems.length === 0) {
+
+        dropZone.appendChild(emptyBoard);
+
+        return;
+
+    }
+
+
+    storyItems.forEach((item, index) => {
+
+        const card = document.createElement("div");
+
+        card.className = "story-item";
+
+        card.draggable = true;
+
+        card.dataset.id = item.id;
+
+
+        card.innerHTML = `
+
+            <div class="item-emoji">
+                ${item.emoji}
+            </div>
+
+            <strong>
+                ${escapeHTML(item.name)}
+            </strong>
+
+            <small>
+                ${escapeHTML(item.description)}
+            </small>
+
+            <button
+                class="edit"
+                title="Editar"
+            >
+                ✏️
+            </button>
+
+            <button
+                class="remove"
+                title="Remover"
+            >
+                ×
+            </button>
+
+        `;
+
+
+        card.addEventListener("click", () => {
+
+            document.querySelectorAll(".story-item")
+                .forEach(x => x.classList.remove("selected"));
+
+            card.classList.add("selected");
+
+        });
+
+
+        card.addEventListener("dragstart", e => {
+
+            draggedStoryItem = index;
+
+            card.classList.add("selected");
+
+            e.dataTransfer.effectAllowed = "move";
+
+        });
+
+
+        card.addEventListener("dragend", () => {
+
+            draggedStoryItem = null;
+
+            card.classList.remove("selected");
+
+        });
+
+
+        card.addEventListener("dragover", e => {
+
+            e.preventDefault();
+
+        });
+
+
+        card.addEventListener("drop", e => {
+
+            e.preventDefault();
+
+            if (
+                draggedStoryItem !== null &&
+                draggedStoryItem !== index
+            ) {
+
+                const moved = storyItems.splice(
+                    draggedStoryItem,
+                    1
+                )[0];
+
+                storyItems.splice(
+                    index,
+                    0,
+                    moved
+                );
+
+                renderStoryBoard();
+
+            }
+
+        });
+
+
+        card.querySelector(".remove")
+            .addEventListener("click", e => {
+
+                e.stopPropagation();
+
+                storyItems = storyItems.filter(
+                    x => x.id !== item.id
+                );
+
+                renderStoryBoard();
+
+                showToast("Elemento removido 🧹");
+
+            });
+
+
+        card.querySelector(".edit")
+            .addEventListener("click", e => {
+
+                e.stopPropagation();
+
+                if (item.category === "personagens") {
+
+                    openCharacterEditor({
+                        type: "story",
+                        item
+                    });
+
+                } else {
+
+                    showToast("A edição está disponível para personagens ✏️");
+
+                }
+
+            });
+
+
+        dropZone.appendChild(card);
+
+    });
+
+}
+
+
+/* ----------------------------------------
+   EDITOR DE PERSONAGEM
+---------------------------------------- */
+
+function openCharacterEditor(data) {
+
+    editingCharacter = data;
+
+    modalAvatar.textContent = data.item[0] || data.item.emoji;
+
+    characterName.value =
+        data.item[1] || data.item.name;
+
+    characterDescription.value =
+        data.item[2] || data.item.description;
+
+    modalBackdrop.classList.add("show");
+
+    setTimeout(() => {
+
+        characterName.focus();
+
+        characterName.select();
+
+    }, 100);
+
+}
+
+
+/* FECHAR */
+
+document.getElementById("cancelModal")
+    .addEventListener("click", closeModal);
+
+
+modalBackdrop.addEventListener("click", e => {
+
+    if (e.target === modalBackdrop) {
+
+        closeModal();
+
+    }
+
+});
+
+
+function closeModal() {
+
+    modalBackdrop.classList.remove("show");
+
+    editingCharacter = null;
+
+}
+
+
+/* SALVAR */
+
+document.getElementById("saveCharacter")
+    .addEventListener("click", saveCharacter);
+
+
+function saveCharacter() {
+
+    if (!editingCharacter) return;
+
+
+    const newName =
+        characterName.value.trim() || "Personagem";
+
+    const newDescription =
+        characterDescription.value.trim() ||
+        "Um personagem cheio de histórias para contar.";
+
+
+    /* personagem dentro do roteiro */
+
+    if (editingCharacter.type === "story") {
+
+        editingCharacter.item.name = newName;
+
+        editingCharacter.item.description =
+            newDescription;
+
+        renderStoryBoard();
+
+        closeModal();
+
+        showToast("Personagem atualizado! ✨");
+
+        return;
+
+    }
+
+
+    /* personagem da biblioteca */
+
+    if (editingCharacter.type === "library") {
+
+        const category = editingCharacter.category;
+
+        const index = editingCharacter.index;
+
+        library[category][index][1] = newName;
+
+        library[category][index][2] =
+            newDescription;
+
+        renderLibrary();
+
+        closeModal();
+
+        showToast("Personagem personalizado! 🧸");
+
+    }
+
+}
+
+
+/* ----------------------------------------
+   NARRATIVA
+---------------------------------------- */
+
+function generateStory() {
+
+    if (storyItems.length < 2) {
+
+        showToast("Adicione pelo menos 2 elementos primeiro! 🌟");
+
+        return;
+
+    }
+
+
+    const characters =
+        storyItems.filter(
+            x => x.category === "personagens"
+        );
+
+    const villains =
+        storyItems.filter(
+            x => x.category === "viloes"
+        );
+
+    const places =
+        storyItems.filter(
+            x => x.category === "cenarios"
+        );
+
+    const events =
+        storyItems.filter(
+            x => x.category === "acontecimentos"
+        );
+
+    const objects =
+        storyItems.filter(
+            x => x.category === "objetos"
+        );
+
+    const creatures =
+        storyItems.filter(
+            x => x.category === "criaturas"
+        );
+
+    const emotions =
+        storyItems.filter(
+            x => x.category === "emocoes"
+        );
+
+
+    const mainCharacter =
+        characters[0] || {
+            name: "um pequeno aventureiro",
+            description: "uma pessoa muito curiosa"
+        };
+
+
+    const secondCharacter =
+        characters[1];
+
+
+    const villain =
+        villains[0];
+
+
+    const place =
+        places[0] || {
+            name: "um lugar desconhecido"
+        };
+
+
+    const event =
+        events[0];
+
+
+    const object =
+        objects[0];
+
+
+    const creature =
+        creatures[0];
+
+
+    const emotion =
+        emotions[0];
+
+
+    const title =
+        createTitle(
+            mainCharacter,
+            place,
+            event
+        );
+
+
+    let paragraphs = [];
+
+
+    /* INTRODUÇÃO */
+
+    let intro =
+        `Em uma manhã que parecia ser igual a tantas outras, ${mainCharacter.name} acordou com uma sensação estranha. `;
+
+    intro += `${capitalize(mainCharacter.name)} era ${lowerFirst(mainCharacter.description)} `;
+
+    intro += `e costumava imaginar que os dias mais interessantes eram aqueles em que alguma coisa inesperada acontecia. `;
+
+    intro += `Naquele dia, porém, ainda não fazia ideia de que sua próxima aventura estava prestes a começar.`;
+
+    paragraphs.push(intro);
+
+
+    /* CENÁRIO */
+
+    let scene =
+        `Tudo começou em ${article(place.name)}. `;
+
+    scene += `O lugar parecia tranquilo, mas havia pequenos detalhes que não combinavam com uma manhã comum. `;
+
+    if (place.description) {
+
+        scene += `${capitalize(place.description)} `;
+
+    }
+
+    scene += `${capitalize(mainCharacter.name)} olhou ao redor e decidiu seguir em frente, mesmo sem saber exatamente o que estava procurando.`;
+
+    paragraphs.push(scene);
+
+
+    /* SEGUNDO PERSONAGEM */
+
+    if (secondCharacter) {
+
+        paragraphs.push(
+            `${capitalize(mainCharacter.name)} não demorou muito para encontrar ${secondCharacter.name}. ` +
+            `${capitalize(secondCharacter.name)} ${lowerFirst(secondCharacter.description)} ` +
+            `Os dois perceberam rapidamente que tinham algo em comum: nenhum deles queria simplesmente voltar para casa sem descobrir o que estava acontecendo.`
+        );
+
+    }
+
+
+    /* ACONTECIMENTO */
+
+    if (event) {
+
+        paragraphs.push(
+            `Foi então que ${lowerFirst(event.description)} ` +
+            `Por alguns segundos, ninguém disse nada. ` +
+            `Depois de se entreolharem, ${capitalize(mainCharacter.name)} respirou fundo e falou: “Acho que a gente acabou de encontrar uma aventura.”`
+        );
+
+    }
+
+
+    /* OBJETO */
+
+    if (object) {
+
+        paragraphs.push(
+            `Perto dali, havia ${article(object.name)}. ` +
+            `${capitalize(object.name)} não parecia ser um objeto comum. ` +
+            `${capitalize(object.description)} ` +
+            `Quando ${capitalize(mainCharacter.name)} chegou mais perto, percebeu que aquele objeto poderia ser a chave para entender todo o mistério.`
+        );
+
+    }
+
+
+    /* VILÃO */
+
+    if (villain) {
+
+        paragraphs.push(
+            `Mas a aventura não seria tão fácil. ` +
+            `${capitalize(villain.name)} apareceu no caminho. ` +
+            `${capitalize(villain.name)} ${lowerFirst(villain.description)} ` +
+            `Em vez de atacar imediatamente, o vilão apontou para o caminho à frente e disse que ninguém conseguiria chegar ao final sem resolver um desafio primeiro.`
+        );
+
+    }
+
+
+    /* CRIATURA */
+
+    if (creature) {
+
+        paragraphs.push(
+            `Enquanto procuravam uma solução, surgiu ${article(creature.name)}. ` +
+            `${capitalize(creature.name)} ${lowerFirst(creature.description)} ` +
+            `Para surpresa de todos, a criatura não parecia querer brigar. Pelo contrário: ela parecia saber exatamente onde os aventureiros deveriam ir.`
+        );
+
+    }
+
+
+    /* EMOÇÃO */
+
+    if (emotion) {
+
+        paragraphs.push(
+            `Por alguns instantes, ${mainCharacter.name} sentiu ${emotion.name.toLowerCase()}. ` +
+            `Era difícil saber se aquilo era um aviso para desistir ou justamente o contrário. ` +
+            `Então ${capitalize(mainCharacter.name)} percebeu uma coisa importante: sentir medo, dúvida ou nervosismo não significava que precisava parar.`
+        );
+
+    }
+
+
+    /* CLÍMAX */
+
+    paragraphs.push(
+        `Os amigos seguiram juntos. ` +
+        `A cada passo, novas pistas apareciam, e a aventura ficava maior do que qualquer um deles havia imaginado. ` +
+        `${capitalize(mainCharacter.name)} percebeu que não precisava ser a pessoa mais forte ou mais corajosa do mundo. ` +
+        `Bastava continuar pensando, ouvir os amigos e não desistir quando algo desse errado.`
+    );
+
+
+    /* FINAL */
+
+    paragraphs.push(
+        `Depois de uma longa caminhada, eles finalmente descobriram a verdade por trás de tudo aquilo. ` +
+        `O que parecia ser um problema enorme acabou ensinando uma lição simples: as melhores aventuras não acontecem porque tudo sai perfeito, mas porque alguém decide tentar mais uma vez.`
+    );
+
+
+    paragraphs.push(
+        `Quando o dia chegou ao fim, ${mainCharacter.name} voltou para casa com um sorriso no rosto. ` +
+        `Talvez ninguém acreditasse naquela história quando ela fosse contada. ` +
+        `Mas ${capitalize(mainCharacter.name)} sabia que aquilo não era o fim. ` +
+        `Era apenas o primeiro capítulo de uma aventura que ainda tinha muitas páginas para preencher.`
+    );
+
+
+    storyText.innerHTML = `
+
+        <div class="story-title">
+            ${escapeHTML(title)} ✨
+        </div>
+
+        ${paragraphs
+            .map(p => `<p>${escapeHTML(p)}</p>`)
+            .join("")}
+
+    `;
+
+
+    storyText.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
+}
+
+
+/* ----------------------------------------
+   TÍTULO
+---------------------------------------- */
+
+function createTitle(character, place, event) {
+
+    const titles = [
+
+        `A aventura de ${character.name}`,
+
+        `${character.name} e o mistério de ${place.name}`,
+
+        `O segredo escondido em ${place.name}`,
+
+        `${character.name} e a aventura inesperada`,
+
+        `O dia em que tudo mudou`,
+
+        `O grande mistério de ${place.name}`
+
+    ];
+
+
+    return titles[
+        Math.floor(Math.random() * titles.length)
+    ];
+
+}
+
+
+/* ----------------------------------------
+   IDEIA SURPRESA
+---------------------------------------- */
+
+document.getElementById("randomBtn")
+    .addEventListener("click", () => {
+
+        storyItems = [];
+
+
+        const choose = category => {
+
+            const items = library[category];
+
+            return items[
+                Math.floor(Math.random() * items.length)
+            ];
+
+        };
+
+
+        [
+            "personagens",
+            "personagens",
+            "viloes",
+            "cenarios",
+            "acontecimentos",
+            "objetos",
+            "criaturas"
+        ].forEach(category => {
+
+            const item = choose(category);
+
+            storyItems.push({
+
+                id: Date.now() + Math.random(),
+
+                category,
+
+                emoji: item[0],
+
+                name: item[1],
+
+                description: item[2]
+
+            });
+
+        });
+
+
+        renderStoryBoard();
+
+        generateStory();
+
+        showToast("Uma aventura surpresa foi criada! 🎲");
+
+    });
+
+
+/* ----------------------------------------
+   GERAR
+---------------------------------------- */
+
+document.getElementById("generateBtn")
+    .addEventListener("click", generateStory);
+
+
+/* ----------------------------------------
+   LIMPAR
+---------------------------------------- */
+
+document.getElementById("clearBtn")
+    .addEventListener("click", () => {
+
+        if (!storyItems.length) {
+
+            showToast("O roteiro já está vazio! 🧹");
+
+            return;
+
+        }
+
+
+        storyItems = [];
+
+        renderStoryBoard();
+
+
+        storyText.innerHTML = `
+
+            <div class="placeholder-story">
+                🌟 Sua história aparecerá aqui!<br>
+                Monte seu roteiro e clique em
+                <b>“Criar minha narrativa”</b>.
+            </div>
+
+        `;
+
+
+        showToast("Roteiro limpo! ✨");
+
+    });
+
+
+/* ----------------------------------------
+   ENTER NO MODAL
+---------------------------------------- */
+
+characterName.addEventListener("keydown", e => {
+
+    if (e.key === "Enter") {
+
+        e.preventDefault();
+
+        saveCharacter();
+
+    }
+
+});
+
+
+/* ----------------------------------------
+   TOAST
+---------------------------------------- */
+
+let toastTimer;
+
+function showToast(message) {
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2600);
+
+}
+
+
+/* ----------------------------------------
+   UTILITÁRIOS
+---------------------------------------- */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function capitalize(text) {
+
+    if (!text) return "";
+
+    return text.charAt(0).toUpperCase() + text.slice(1);
+
+}
+
+
+function lowerFirst(text) {
+
+    if (!text) return "";
+
+    return text.charAt(0).toLowerCase() + text.slice(1);
+
+}
+
+
+function article(name) {
+
+    const feminine =
+        [
+            "fada",
+            "princesa",
+            "bruxa",
+            "sereia",
+            "vampira",
+            "raposa",
+            "coruja",
+            "tartaruga",
+            "abelha",
+            "borboleta",
+            "baleia",
+            "chave",
+            "bússola",
+            "ampulheta",
+            "vela",
+            "poção",
+            "câmera",
+            "mochila",
+            "guitarra",
+            "moeda",
+            "caixa"
+        ].some(word =>
+            name.toLowerCase().includes(word)
+        );
+
+
+    return feminine
+        ? `a ${name}`
+        : `o ${name}`;
+
+}
+
+
+/* ----------------------------------------
+   INICIALIZAÇÃO
+---------------------------------------- */
+
+renderLibrary();
+
+renderStoryBoard();
+
+</script>
+
+</body>
+</html>
+```
